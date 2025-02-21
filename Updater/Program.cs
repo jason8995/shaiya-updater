@@ -103,15 +103,13 @@ namespace Updater
             if (!File.Exists("data.sah") || !File.Exists("data.saf"))
                 return;
 
-            var binaryReader = new BinaryReader(File.OpenRead("data.sah"));
-            binaryReader.BaseStream.Seek(7, SeekOrigin.Begin);
-
-            var fileCount = binaryReader.ReadInt32();
-            binaryReader.Close();
+            var fileCount = Function.GetSahFileCount("data.sah");
+            if (fileCount <= 0)
+                throw new FileFormatException();
 
             var progressReport = new ProgressReport(1);
             var progress = new Progress(worker, progressReport, fileCount, 1);
-            Function.DataBuilder(progress.PerformStep);
+            Function.DataBuilder("data.sah", "data.saf", progress.PerformStep);
         }
 
         /// <summary>
@@ -123,25 +121,28 @@ namespace Updater
             if (File.Exists("delete.lst"))
             {
                 var paths = File.ReadAllLines("delete.lst");
-                if (paths.Length > 0)
-                {
-                    var progressReport = new ProgressReport(1);
-                    var progress = new Progress(worker, progressReport, paths.Length, 1);
-                    Function.RemoveFiles(progress.PerformStep);
-                }
+                var fileCount = paths.Length;
+                if (fileCount <= 0)
+                    throw new FileFormatException();
+
+                var progressReport = new ProgressReport(1);
+                var progress = new Progress(worker, progressReport, fileCount, 1);
+                Function.RemoveFiles("data.sah", "data.saf", "delete.lst", progress.PerformStep);
+                File.Delete("delete.lst");
             }
 
             if (File.Exists("update.sah") && File.Exists("update.saf"))
             {
-                var binaryReader = new BinaryReader(File.OpenRead("update.sah"));
-                binaryReader.BaseStream.Seek(7, SeekOrigin.Begin);
-
-                var fileCount = binaryReader.ReadInt32();
-                binaryReader.Close();
+                var fileCount = Function.GetSahFileCount("update.sah");
+                if (fileCount <= 0)
+                    throw new FileFormatException();
 
                 var progressReport = new ProgressReport(1);
                 var progress = new Progress(worker, progressReport, fileCount, 1);
-                Function.DataPatcher(progress.PerformStep);
+                Function.DataPatcher("data.sah", "data.saf", "update.sah", "update.saf", progress.PerformStep);
+
+                File.Delete("update.sah");
+                File.Delete("update.saf");
             }
         }
 

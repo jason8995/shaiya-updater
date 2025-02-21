@@ -14,16 +14,17 @@
 #include "include/Native.h"
 using namespace Updater::Data;
 
-void Native_DataBuilder(void(*progressCallback)())
+void Native::DataBuilder(const wchar_t* sahPath, const wchar_t* safPath, void(*progressCallback)())
 {
-    auto data = std::make_unique<Data>("data.sah", "data.saf");
-    data->sah->read();
+    auto saf = std::make_unique<Saf>(safPath);
+    auto sah = std::make_unique<Sah>(sahPath);
+    sah->read();
 
-    std::filesystem::rename("data.sah", "data.sah.bak");
-    std::filesystem::rename("data.saf", "data.saf.bak");
-
-    auto saf = std::make_unique<Saf>(data->saf->path);
+    auto data = std::make_unique<Data>(sahPath, safPath);
+    data->sah->path += ".bak";
     data->saf->path += ".bak";
+    std::filesystem::rename(sahPath, data->sah->path);
+    std::filesystem::rename(safPath, data->saf->path);
 
     auto writeFolder = [&](const auto& self, const auto& currentFolder) -> void {
         for (auto& [name, file] : currentFolder->files)
@@ -46,18 +47,24 @@ void Native_DataBuilder(void(*progressCallback)())
             self(self, subfolder);
     };
 
-    writeFolder(writeFolder, data->sah->rootFolder);
-    data->sah->write();
-    std::remove("data.sah.bak");
-    std::remove("data.saf.bak");
+    writeFolder(writeFolder, sah->rootFolder);
+    sah->write();
+    std::filesystem::remove(data->sah->path);
+    std::filesystem::remove(data->saf->path);
 }
 
-void Native_DataPatcher(void(*progressCallback)())
+void Native::DataPatcher(
+    const wchar_t* targetSahPath, 
+    const wchar_t* targetSafPath, 
+    const wchar_t* updateSahPath, 
+    const wchar_t* updateSafPath, 
+    void(*progressCallback)()
+)
 {
-    auto target = std::make_unique<Data>("data.sah", "data.saf");
+    auto target = std::make_unique<Data>(targetSahPath, targetSafPath);
     target->sah->read();
 
-    auto update = std::make_unique<Data>("update.sah", "update.saf");
+    auto update = std::make_unique<Data>(updateSahPath, updateSafPath);
     update->sah->read();
 
     for (const auto& [path, patch] : update->sah->files)
@@ -115,16 +122,21 @@ void Native_DataPatcher(void(*progressCallback)())
     }
 
     target->sah->write();
-    std::remove("update.sah");
-    std::remove("update.saf");
 }
 
-void Native_RemoveFiles(void(*progressCallback)())
+int Native::GetSahFileCount(const wchar_t* sahPath)
 {
-    auto data = std::make_unique<Data>("data.sah", "data.saf");
+    auto sah = std::make_unique<Sah>(sahPath);
+    sah->read();
+    return sah->fileCount;
+}
+
+void Native::RemoveFiles(const wchar_t* sahPath, const wchar_t* safPath, const wchar_t* lstPath, void(*progressCallback)())
+{
+    auto data = std::make_unique<Data>(sahPath, safPath);
     data->sah->read();
 
-    std::ifstream list("delete.lst");
+    std::ifstream list(lstPath);
     if (!list)
         return;
 
@@ -156,5 +168,4 @@ void Native_RemoveFiles(void(*progressCallback)())
     }
 
     data->sah->write();
-    std::remove("delete.lst");
 }
