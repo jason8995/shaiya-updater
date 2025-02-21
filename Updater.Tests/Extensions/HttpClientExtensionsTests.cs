@@ -3,6 +3,7 @@ using Updater.Extensions;
 
 namespace Updater.Tests.Extensions
 {
+    [TestFixture]
     public class HttpClientExtensionsTests
     {
         private const uint PatchFileVersion = 2;
