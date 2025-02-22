@@ -5,7 +5,7 @@ using namespace System;
 using namespace System::Runtime::InteropServices;
 using namespace Updater::Interop;
 
-void Function::DataBuilder(String^ sahPath, String^ safPath, Action^ progressCallback)
+void Function::DataBuilder(const String^ sahPath, const String^ safPath, Action^ progressCallback)
 {
     cli::pin_ptr<const wchar_t> gcSahPath = PtrToStringChars(sahPath);
     cli::pin_ptr<const wchar_t> gcSafPath = PtrToStringChars(safPath);
@@ -18,14 +18,20 @@ void Function::DataBuilder(String^ sahPath, String^ safPath, Action^ progressCal
     {
         auto gch = GCHandle::Alloc(progressCallback);
         auto ptr = Marshal::GetFunctionPointerForDelegate(progressCallback).ToPointer();
-        auto callback = static_cast<void(*)()>(ptr);
+        auto callback = static_cast<const void(*)()>(ptr);
 
         Native::DataBuilder(gcSahPath, gcSafPath, callback);
         gch.Free();
     }
 }
 
-void Function::DataPatcher(String^ targetSahPath, String^ targetSafPath, String^ updateSahPath, String^ updateSafPath, Action^ progressCallback)
+void Function::DataPatcher(
+    const String^ targetSahPath, 
+    const String^ targetSafPath, 
+    const String^ updateSahPath, 
+    const String^ updateSafPath, 
+    Action^ progressCallback
+)
 {
     cli::pin_ptr<const wchar_t> gcTargetSahPath = PtrToStringChars(targetSahPath);
     cli::pin_ptr<const wchar_t> gcTargetSafPath = PtrToStringChars(targetSafPath);
@@ -40,20 +46,20 @@ void Function::DataPatcher(String^ targetSahPath, String^ targetSafPath, String^
     {
         auto gch = GCHandle::Alloc(progressCallback);
         auto ptr = Marshal::GetFunctionPointerForDelegate(progressCallback).ToPointer();
-        auto callback = static_cast<void(*)()>(ptr);
+        auto callback = static_cast<const void(*)()>(ptr);
 
         Native::DataPatcher(gcTargetSahPath, gcTargetSafPath, gcUpdateSahPath, gcUpdateSafPath, callback);
         gch.Free();
     }
 }
 
-int Function::GetSahFileCount(String^ sahPath)
+int Function::GetSahFileCount(const String^ sahPath)
 {
     cli::pin_ptr<const wchar_t> gcSahPath = PtrToStringChars(sahPath);
     return Native::GetSahFileCount(gcSahPath);
 }
 
-void Function::RemoveFiles(String^ sahPath, String^ safPath, String^ lstPath, Action^ progressCallback)
+void Function::RemoveFiles(const String^ sahPath, const String^ safPath, const String^ lstPath, Action^ progressCallback)
 {
     cli::pin_ptr<const wchar_t> gcSahPath = PtrToStringChars(sahPath);
     cli::pin_ptr<const wchar_t> gcSafPath = PtrToStringChars(safPath);
@@ -67,7 +73,7 @@ void Function::RemoveFiles(String^ sahPath, String^ safPath, String^ lstPath, Ac
     {
         auto gch = GCHandle::Alloc(progressCallback);
         auto ptr = Marshal::GetFunctionPointerForDelegate(progressCallback).ToPointer();
-        auto callback = static_cast<void(*)()>(ptr);
+        auto callback = static_cast<const void(*)()>(ptr);
 
         Native::RemoveFiles(gcSahPath, gcSafPath, gcLstPath, callback);
         gch.Free();

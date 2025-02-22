@@ -14,7 +14,7 @@
 #include "include/Native.h"
 using namespace Updater::Data;
 
-void Native::DataBuilder(const wchar_t* sahPath, const wchar_t* safPath, void(*progressCallback)())
+void Native::DataBuilder(const wchar_t* sahPath, const wchar_t* safPath, const void(*progressCallback)())
 {
     auto saf = std::make_unique<Saf>(safPath);
     auto sah = std::make_unique<Sah>(sahPath);
@@ -58,7 +58,7 @@ void Native::DataPatcher(
     const wchar_t* targetSafPath, 
     const wchar_t* updateSahPath, 
     const wchar_t* updateSafPath, 
-    void(*progressCallback)()
+    const void(*progressCallback)()
 )
 {
     auto target = std::make_unique<Data>(targetSahPath, targetSafPath);
@@ -131,11 +131,8 @@ int Native::GetSahFileCount(const wchar_t* sahPath)
     return sah->fileCount;
 }
 
-void Native::RemoveFiles(const wchar_t* sahPath, const wchar_t* safPath, const wchar_t* lstPath, void(*progressCallback)())
+void Native::RemoveFiles(const wchar_t* sahPath, const wchar_t* safPath, const wchar_t* lstPath, const void(*progressCallback)())
 {
-    auto data = std::make_unique<Data>(sahPath, safPath);
-    data->sah->read();
-
     std::ifstream list(lstPath);
     if (!list)
         return;
@@ -150,6 +147,11 @@ void Native::RemoveFiles(const wchar_t* sahPath, const wchar_t* safPath, const w
     }
 
     list.close();
+    if (paths.empty())
+        return;
+
+    auto data = std::make_unique<Data>(sahPath, safPath);
+    data->sah->read();
 
     for (const auto& path : paths)
     {

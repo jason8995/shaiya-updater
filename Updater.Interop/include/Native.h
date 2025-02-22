@@ -10,7 +10,7 @@ public:
     /// <param name="sahPath"></param>
     /// <param name="safPath"></param>
     /// <param name="progressCallback"></param>
-    static void DataBuilder(const wchar_t* sahPath, const wchar_t* safPath, void(*progressCallback)() = nullptr);
+    static void DataBuilder(const wchar_t* sahPath, const wchar_t* safPath, const void(*progressCallback)() = nullptr);
 
     /// <summary>
     /// 
@@ -25,7 +25,7 @@ public:
         const wchar_t* targetSafPath, 
         const wchar_t* updateSahPath, 
         const wchar_t* updateSafPath, 
-        void(*progressCallback)() = nullptr
+        const void(*progressCallback)() = nullptr
     );
 
     /// <summary>
@@ -42,5 +42,5 @@ public:
     /// <param name="safPath"></param>
     /// <param name="lstPath"></param>
     /// <param name="progressCallback"></param>
-    static void RemoveFiles(const wchar_t* sahPath, const wchar_t* safPath, const wchar_t* lstPath, void(*progressCallback)() = nullptr);
+    static void RemoveFiles(const wchar_t* sahPath, const wchar_t* safPath, const wchar_t* lstPath, const void(*progressCallback)() = nullptr);
 };
