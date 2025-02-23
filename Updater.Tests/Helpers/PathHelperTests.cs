@@ -2,10 +2,21 @@
 
 namespace Updater.Tests.Helpers
 {
+    [TestFixture]
     public class PathHelperTests
     {
-        [TestCase("a/b/c")]
-        [TestCase("a\\b\\c")]
+        [Test]
+        public void IsDirectorySeparatorTest()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(PathHelper.IsDirectorySeparator(Path.AltDirectorySeparatorChar), Is.True);
+                Assert.That(PathHelper.IsDirectorySeparator(Path.DirectorySeparatorChar), Is.True);
+            });
+        }
+
+        [TestCase("/a/b/c/")]
+        [TestCase("a/b/c/d")]
         public void MakePreferredTest(string path)
         {
             var preferred = PathHelper.MakePreferred(path);
@@ -16,8 +27,8 @@ namespace Updater.Tests.Helpers
             }
         }
 
+        [TestCase("/", ExpectedResult = 0)]
         [TestCase("/a/b/c/", ExpectedResult = 3)]
-        [TestCase("a\\b\\c", ExpectedResult = 3)]
         [TestCase("a/b/c/d", ExpectedResult = 4)]
         public int SplitTest(string path)
         {
