@@ -6,7 +6,7 @@ namespace Updater.Helpers
     public static class PathHelper
     {
         /// <summary>
-        /// 
+        /// Returns a value that indicates whether the specified character is a directory separator.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -16,10 +16,11 @@ namespace Updater.Helpers
         }
 
         /// <summary>
-        /// 
+        /// On a Windows system, converts each separator to a preferred separator as needed. On a POSIX system, 
+        /// the generic format and the native format are the same.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns>See std::filesystem::path::make_preferred docs.</returns>
+        /// <returns></returns>
         public static string MakePreferred(string path)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -29,10 +30,10 @@ namespace Updater.Helpers
         }
 
         /// <summary>
-        /// 
+        /// Splits a path into components based on directory separators.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
+        /// <returns>A string array containing the components delimited by directory separators.</returns>
         public static string[] Split(string path)
         {
             var separator = new char[] { Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar };
