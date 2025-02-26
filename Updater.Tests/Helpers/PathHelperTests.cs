@@ -1,4 +1,5 @@
-﻿using Updater.Helpers;
+﻿using System.Runtime.InteropServices;
+using Updater.Helpers;
 
 namespace Updater.Tests.Helpers
 {
@@ -19,6 +20,9 @@ namespace Updater.Tests.Helpers
         [TestCase("a/b/c/d")]
         public void MakePreferredTest(string path)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Assert.Charlie();
+
             var preferred = PathHelper.MakePreferred(path);
             foreach (char value in preferred)
             {

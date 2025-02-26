@@ -8,11 +8,13 @@ namespace Updater.Tests.Extensions
     {
         private const uint PatchFileVersion = 2;
         private HttpClient _httpClient;
+        private Patch _patch;
 
         [SetUp]
         public void SetUp()
         {
             _httpClient = new HttpClient();
+            _patch = new Patch(PatchFileVersion);
         }
 
         [TearDown]
@@ -24,9 +26,8 @@ namespace Updater.Tests.Extensions
         [Test]
         public void DownloadFileTest()
         {
-            var patch = new Patch(PatchFileVersion);
-            _httpClient.DownloadFile(patch.Url, patch.FileName);
-            Assume.That(patch.Exists(), Is.True);
+            _httpClient.DownloadFile(_patch.Url, _patch.FileName);
+            Assume.That(File.Exists(_patch.Path), Is.True);
         }
     }
 }
