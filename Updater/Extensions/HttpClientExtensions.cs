@@ -9,7 +9,7 @@ namespace Updater.Extensions
         /// Downloads the resource with the specified URI to a local file.
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <param name="requestUri">The URI specified as a <see cref="String"/>, from which to download data.</param>
+        /// <param name="requestUri">The URI specified as a string, from which to download data.</param>
         /// <param name="fileName">The name of the local file that is to receive the data.</param>
         public static void DownloadFile(this HttpClient httpClient, string? requestUri, string fileName) =>
             DownloadFile(httpClient, CreateUri(requestUri), fileName);

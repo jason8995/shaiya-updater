@@ -16,11 +16,11 @@ namespace Updater.Helpers
         }
 
         /// <summary>
-        /// On a Windows system, converts each separator to a preferred separator as needed. On a POSIX system, 
-        /// the generic format and the native format are the same.
+        /// Converts each separator to a preferred separator as needed.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
+        /// <remarks>https://learn.microsoft.com/en-us/cpp/standard-library/path-class?view=msvc-170#make_preferred</remarks>
         public static string MakePreferred(string path)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

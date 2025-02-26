@@ -1,5 +1,5 @@
-﻿using System.Windows.Media.Imaging;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace Updater.Helpers
 {
