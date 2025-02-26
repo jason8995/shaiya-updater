@@ -14,7 +14,7 @@ namespace Updater
 {
     public static class Program
     {
-        public static void DoWork(HttpClient httpClient, BackgroundWorker worker)
+        public static void DoWork(HttpClient httpClient, BackgroundWorker backgroundWorker)
         {
             try
             {
@@ -23,15 +23,15 @@ namespace Updater
 
                 if (serverConfiguration.UpdaterVersion > Constants.UpdaterVersion)
                 {
-                    worker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage1));
+                    backgroundWorker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage1));
                     UpdaterPatcher(httpClient);
                     return;
                 }
 
                 if (serverConfiguration.PatchFileVersion > clientConfiguration.CurrentVersion)
                 {
-                    worker.ReportProgress(0, new ProgressReport(1));
-                    worker.ReportProgress(0, new ProgressReport(2));
+                    backgroundWorker.ReportProgress(0, new ProgressReport(1));
+                    backgroundWorker.ReportProgress(0, new ProgressReport(2));
 
                     uint progressMax = serverConfiguration.PatchFileVersion - clientConfiguration.CurrentVersion;
                     uint progressValue = 1;
@@ -39,35 +39,35 @@ namespace Updater
                     while (clientConfiguration.CurrentVersion < serverConfiguration.PatchFileVersion)
                     {
                         var progressMessage = string.Format(Strings.ProgressMessage2, progressValue, progressMax);
-                        worker.ReportProgress(0, new ProgressReport(progressMessage));
+                        backgroundWorker.ReportProgress(0, new ProgressReport(progressMessage));
 
                         var patch = new Patch(clientConfiguration.CurrentVersion + 1);
                         httpClient.DownloadFile(patch.Url, patch.Path);
 
-                        if (!patch.Exists())
+                        if (!File.Exists(patch.Path))
                         {
-                            worker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage3));
+                            backgroundWorker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage3));
                             return;
                         }
 
-                        worker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage4));
+                        backgroundWorker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage4));
                         IniHelper.WritePrivateProfileString("Version", "StartUpdate", "EXTRACT_START", clientConfiguration.Path);
 
                         // Issue: antivirus software could be scanning a file from a previous patch
                         // when this method tries to overwrite it.
                         if (!patch.ExtractToCurrentDirectory())
                         {
-                            worker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage5));
+                            backgroundWorker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage5));
                             return;
                         }
 
                         IniHelper.WritePrivateProfileString("Version", "StartUpdate", "EXTRACT_END", clientConfiguration.Path);
-                        patch.Delete();
+                        File.Delete(patch.Path);
 
-                        worker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage6));
+                        backgroundWorker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage6));
                         IniHelper.WritePrivateProfileString("Version", "StartUpdate", "UPDATE_START", clientConfiguration.Path);
 
-                        DataPatcher(worker);
+                        DataPatcher(backgroundWorker);
 
                         IniHelper.WritePrivateProfileString("Version", "StartUpdate", "UPDATE_END", clientConfiguration.Path);
 
@@ -77,14 +77,14 @@ namespace Updater
                         var currentVersion = clientConfiguration.CurrentVersion;
                         var percentProgress = MathHelper.CalculatePercentage((int)currentVersion, (int)serverConfiguration.PatchFileVersion);
                         if (percentProgress > 0)
-                            worker.ReportProgress(percentProgress, new ProgressReport(Strings.ProgressMessage7, 2));
+                            backgroundWorker.ReportProgress(percentProgress, new ProgressReport(Strings.ProgressMessage7, 2));
 
                         IniHelper.WritePrivateProfileString("Version", "CurrentVersion", currentVersion.ToString(), clientConfiguration.Path);
                     }
 
-                    worker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage8));
-                    DataBuilder(worker);
-                    worker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage7));
+                    backgroundWorker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage8));
+                    DataBuilder(backgroundWorker);
+                    backgroundWorker.ReportProgress(0, new ProgressReport(Strings.ProgressMessage7));
                 }
             }
             catch (Exception ex)
@@ -94,11 +94,7 @@ namespace Updater
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="worker"></param>
-        private static void DataBuilder(BackgroundWorker worker)
+        private static void DataBuilder(BackgroundWorker backgroundWorker)
         {
             if (!File.Exists("data.sah") || !File.Exists("data.saf"))
                 return;
@@ -108,15 +104,11 @@ namespace Updater
                 throw new FileFormatException();
 
             var progressReport = new ProgressReport(1);
-            var progress = new Progress(worker, progressReport, fileCount, 1);
+            var progress = new Progress(backgroundWorker, progressReport, fileCount, 1);
             Function.DataBuilder("data.sah", "data.saf", progress.PerformStep);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="worker"></param>
-        private static void DataPatcher(BackgroundWorker worker)
+        private static void DataPatcher(BackgroundWorker backgroundWorker)
         {
             if (File.Exists("delete.lst"))
             {
@@ -126,7 +118,7 @@ namespace Updater
                     throw new FileFormatException();
 
                 var progressReport = new ProgressReport(1);
-                var progress = new Progress(worker, progressReport, fileCount, 1);
+                var progress = new Progress(backgroundWorker, progressReport, fileCount, 1);
                 Function.RemoveFiles("data.sah", "data.saf", "delete.lst", progress.PerformStep);
                 File.Delete("delete.lst");
             }
@@ -138,7 +130,7 @@ namespace Updater
                     throw new FileFormatException();
 
                 var progressReport = new ProgressReport(1);
-                var progress = new Progress(worker, progressReport, fileCount, 1);
+                var progress = new Progress(backgroundWorker, progressReport, fileCount, 1);
                 Function.DataPatcher("data.sah", "data.saf", "update.sah", "update.saf", progress.PerformStep);
 
                 File.Delete("update.sah");
