@@ -17,8 +17,8 @@
     <RepositoryType>git</RepositoryType>
     <ApplicationIcon>Resources\Icon\IconGroup164.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>2.2.2.0</AssemblyVersion>
-    <FileVersion>2.2.2.0</FileVersion>
+    <AssemblyVersion>2.2.3.0</AssemblyVersion>
+    <FileVersion>2.2.3.0</FileVersion>
     <Platforms>x86;x64</Platforms>
   </PropertyGroup>
 
@@ -85,6 +85,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
   </ItemGroup>
 
 </Project>
