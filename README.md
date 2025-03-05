@@ -22,6 +22,8 @@ Windows Presentation Foundation (WPF)
 
 [Microsoft.AspNet.WebApi.Client](https://www.nuget.org/packages/Microsoft.AspNet.WebApi.Client/)
 
+[Microsoft.Extensions.Configuration.Ini](https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Ini/)
+
 ## Build
 
 Use **Publish** instead of **Build** to output a single .NET executable. The C++ library will be copied to the publish directory.
@@ -48,6 +50,7 @@ This project is designed to be like the original application. Users are expected
 ## Client Configuration
 
 ```ini
+; Version.ini
 [Version]
 CheckVersion=3
 CurrentVersion=1
