@@ -20,8 +20,8 @@ namespace Updater::Data
         int32_t fileCount;
         std::shared_ptr<SFolder> rootFolder;
 
-        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathHelper::CompareIgnoreCaseLT> files;
-        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathHelper::CompareIgnoreCaseLT> folders;
+        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathToUpperCompare> files;
+        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathToUpperCompare> folders;
 
         /// <summary>
         /// Initializes a new instance of the Sah class.

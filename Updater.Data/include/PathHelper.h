@@ -7,22 +7,11 @@
 
 namespace Updater::Data
 {
-    class PathHelper final
+    class PathHelper
     {
     public:
 
         using Path = std::filesystem::path;
-
-        /// <summary>
-        /// A case-insensitive less than comparator.
-        /// </summary>
-        struct CompareIgnoreCaseLT
-        {
-            bool operator()(const Path& lhs, const Path& rhs) const
-            {
-                return icompare(lhs, rhs) < 0;
-            }
-        };
 
         /// <summary>
         /// Combines two paths into a path.
@@ -33,27 +22,6 @@ namespace Updater::Data
         static Path combine(const Path& lhs, const Path& rhs)
         {
             return lhs / rhs;
-        }
-
-        /// <summary>
-        /// Compares two paths, ignoring case.
-        /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
-        /// <returns>See std::string::compare docs.</returns>
-        static int icompare(const Path& lhs, const Path& rhs)
-        {
-            auto a = lhs.wstring();
-            std::transform(a.begin(), a.end(), a.begin(), [](wint_t c) {
-                return std::towupper(c);
-                });
-
-            auto b = rhs.wstring();
-            std::transform(b.begin(), b.end(), b.begin(), [](wint_t c) {
-                return std::towupper(c);
-                });
-
-            return a.compare(b);
         }
 
         /// <summary>
@@ -68,6 +36,52 @@ namespace Updater::Data
                 parts.push_back(part);
 
             return parts;
+        }
+
+        /// <summary>
+        /// Returns a copy of the specified path converted to lowercase.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        static Path toLower(const Path& path)
+        {
+            Path::string_type text = path.native();
+            std::transform(text.begin(), text.end(), text.begin(), [](std::wint_t c) {
+                return static_cast<Path::value_type>(std::towlower(c));
+                });
+
+            return text;
+        }
+
+        /// <summary>
+        /// Returns a copy of the specified path converted to uppercase.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        static Path toUpper(const Path& path)
+        {
+            Path::string_type text = path.native();
+            std::transform(text.begin(), text.end(), text.begin(), [](std::wint_t c) {
+                return static_cast<Path::value_type>(std::towupper(c));
+                });
+
+            return text;
+        }
+    };
+
+    struct PathToLowerCompare : private PathHelper
+    {
+        bool operator()(const Path& lhs, const Path& rhs) const
+        {
+            return toLower(lhs).compare(toLower(rhs)) < 0;
+        }
+    };
+
+    struct PathToUpperCompare : private PathHelper
+    {
+        bool operator()(const Path& lhs, const Path& rhs) const
+        {
+            return toUpper(lhs).compare(toUpper(rhs)) < 0;
         }
     };
 }

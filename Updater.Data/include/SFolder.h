@@ -16,8 +16,8 @@ namespace Updater::Data
         std::filesystem::path name;
         std::shared_ptr<SFolder> parentFolder;
 
-        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathHelper::CompareIgnoreCaseLT> files;
-        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathHelper::CompareIgnoreCaseLT> subfolders;
+        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathToUpperCompare> files;
+        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathToUpperCompare> subfolders;
 
         /// <summary>
         /// Initializes a new instance of the SFolder class.
