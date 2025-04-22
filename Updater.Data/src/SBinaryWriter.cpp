@@ -21,7 +21,7 @@ void SBinaryWriter::write(const std::string& str)
 
 void SBinaryWriter::write(const std::string& buffer, size_t index, size_t count)
 {
-    if ((buffer.size() - index) < count)
+    if ((index + count) > buffer.size())
         throw std::invalid_argument::exception();
 
     stream_->write(&buffer[index], count);
