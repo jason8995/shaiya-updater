@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
-#include <cwctype>
 #include <filesystem>
+#include <locale>
 #include <string>
 #include <vector>
 
@@ -43,11 +43,11 @@ namespace Updater::Data
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        static Path toLower(const Path& path)
+        static Path toLower(const Path& path, const std::locale& loc = std::locale())
         {
             Path::string_type text = path.native();
-            std::transform(text.begin(), text.end(), text.begin(), [](std::wint_t c) {
-                return static_cast<Path::value_type>(std::towlower(c));
+            std::transform(text.begin(), text.end(), text.begin(), [&loc](auto c) {
+                return std::tolower(c, loc);
                 });
 
             return text;
@@ -58,11 +58,11 @@ namespace Updater::Data
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        static Path toUpper(const Path& path)
+        static Path toUpper(const Path& path, const std::locale& loc = std::locale())
         {
             Path::string_type text = path.native();
-            std::transform(text.begin(), text.end(), text.begin(), [](std::wint_t c) {
-                return static_cast<Path::value_type>(std::towupper(c));
+            std::transform(text.begin(), text.end(), text.begin(), [&loc](auto c) {
+                return std::toupper(c, loc);
                 });
 
             return text;
