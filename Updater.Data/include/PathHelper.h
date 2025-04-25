@@ -16,9 +16,6 @@ namespace Updater::Data
         /// <summary>
         /// Combines two paths into a path.
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
-        /// <returns>See std::filesystem::operator/ docs.</returns>
         static Path combine(const Path& lhs, const Path& rhs)
         {
             return lhs / rhs;
@@ -27,8 +24,6 @@ namespace Updater::Data
         /// <summary>
         /// Splits a path into components based on directory separators.
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns>A vector containing the components delimited by directory separators.</returns>
         static std::vector<Path> split(const Path& path)
         {
             std::vector<Path> parts;
@@ -39,49 +34,27 @@ namespace Updater::Data
         }
 
         /// <summary>
-        /// Returns a copy of the specified path converted to lowercase.
+        /// Compares two paths, ignoring case.
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        static Path toLower(const Path& path, const std::locale& loc = std::locale())
+        static int icompare(const Path::string_type& lhs, const Path::string_type& rhs, const std::locale& loc = std::locale())
         {
-            Path::string_type text = path.native();
-            std::transform(text.begin(), text.end(), text.begin(), [&loc](auto c) {
-                return std::tolower(c, loc);
+            auto result = std::lexicographical_compare_three_way(
+                lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend(), [&loc](Path::value_type lc, Path::value_type rc) {
+                    return std::toupper<Path::value_type>(lc, loc) <=> std::toupper<Path::value_type>(rc, loc);
                 });
 
-            return text;
-        }
-
-        /// <summary>
-        /// Returns a copy of the specified path converted to uppercase.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        static Path toUpper(const Path& path, const std::locale& loc = std::locale())
-        {
-            Path::string_type text = path.native();
-            std::transform(text.begin(), text.end(), text.begin(), [&loc](auto c) {
-                return std::toupper(c, loc);
-                });
-
-            return text;
+            return std::is_lt(result) ? -1 : std::is_gt(result) ? 1 : 0;
         }
     };
 
-    struct PathToLowerCompare : private PathHelper
+    /// <summary>
+    /// A case-insensitive less than comparator.
+    /// </summary>
+    struct PathICompareLT : private PathHelper
     {
         bool operator()(const Path& lhs, const Path& rhs) const
         {
-            return toLower(lhs).compare(toLower(rhs)) < 0;
-        }
-    };
-
-    struct PathToUpperCompare : private PathHelper
-    {
-        bool operator()(const Path& lhs, const Path& rhs) const
-        {
-            return toUpper(lhs).compare(toUpper(rhs)) < 0;
+            return icompare(lhs, rhs) < 0;
         }
     };
 }

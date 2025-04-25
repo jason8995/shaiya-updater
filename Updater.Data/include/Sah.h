@@ -20,13 +20,12 @@ namespace Updater::Data
         int32_t fileCount;
         std::shared_ptr<SFolder> rootFolder;
 
-        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathToUpperCompare> files;
-        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathToUpperCompare> folders;
+        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathICompareLT> files;
+        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathICompareLT> folders;
 
         /// <summary>
         /// Initializes a new instance of the Sah class.
         /// </summary>
-        /// <param name="path"></param>
         Sah(const std::filesystem::path& path)
             : path(path), signature("SAH"), unknown(0), fileCount(0), rootFolder(nullptr)
         {
@@ -37,8 +36,6 @@ namespace Updater::Data
         /// exists, the last folder is returned. Otherwise, each folder that does not exist 
         /// is created, and then the last folder is returned.
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         std::shared_ptr<SFolder> ensureFolderExists(const std::filesystem::path& path);
 
         /// <summary>
