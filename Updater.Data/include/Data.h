@@ -17,8 +17,6 @@ namespace Updater::Data
         /// <summary>
         /// Initializes a new instance of the Data class.
         /// </summary>
-        /// <param name="sahPath"></param>
-        /// <param name="safPath"></param>
         Data(const std::filesystem::path& sahPath, const std::filesystem::path& safPath)
             : sah(nullptr), saf(nullptr)
         {

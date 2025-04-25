@@ -20,8 +20,6 @@ namespace Updater::Data
         /// <summary>
         /// Initializes a new instance of the SFile class.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="parentFolder"></param>
         SFile(const std::filesystem::path& name, const std::shared_ptr<SFolder>& parentFolder = nullptr)
             : name(name), parentFolder(parentFolder), offset(0), length(0), timestamp(0)
         {
