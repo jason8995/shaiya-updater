@@ -20,16 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Saf.cpp" />
-    <ClCompile Include="src\SBinaryReader.cpp" />
-    <ClCompile Include="src\SBinaryWriter.cpp" />
     <ClCompile Include="src\Sah.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Convert.h" />
     <ClInclude Include="include\PathHelper.h" />
     <ClInclude Include="include\SBinaryReader.h" />
-    <ClInclude Include="include\SBinaryWriter.h" />
     <ClInclude Include="include\Data.h" />
+    <ClInclude Include="include\SBinaryWriter.h" />
     <ClInclude Include="include\SFile.h" />
     <ClInclude Include="include\SFolder.h" />
     <ClInclude Include="include\Saf.h" />

@@ -14,12 +14,6 @@
     <ClCompile Include="src\Sah.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SBinaryReader.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SBinaryWriter.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Saf.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -40,9 +34,6 @@
     <ClInclude Include="include\SBinaryReader.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\SBinaryWriter.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\PathHelper.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -50,6 +41,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\SFolder.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SBinaryWriter.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,13 +4,15 @@
 #include <memory>
 #include <string>
 #include "PathHelper.h"
+#include "SBinaryReader.h"
+#include "SBinaryWriter.h"
 
 namespace Updater::Data
 {
     class SFile;
     class SFolder;
 
-    class Sah final
+    class Sah final : SBinaryReader, SBinaryWriter
     {
     public:
 

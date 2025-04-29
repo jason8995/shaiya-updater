@@ -4,101 +4,43 @@
 
 namespace Updater::Data
 {
-    class SBinaryReader final
+    class SBinaryReader
     {
     public:
 
         /// <summary>
-        /// Initializes a new instance of the SBinaryReader class.
+        /// Reads the specified number of characters from the stream.
         /// </summary>
-        SBinaryReader(std::ifstream& stream)
-            : stream_(nullptr)
+        static std::string readChars(std::ifstream& stream, size_t count)
         {
-            if (!stream)
-                throw std::invalid_argument::exception();
-
-            stream_ = &stream;
+            std::string buffer(count, 0);
+            stream.read(buffer.data(), buffer.size());
+            return buffer;
         }
 
         /// <summary>
-        /// Closes the underlying stream.
+        /// Reads an integer from the stream.
         /// </summary>
-        void close();
+        template<class IntT, class = std::enable_if_t<std::is_integral_v<IntT>>>
+        static IntT readInt(std::ifstream& stream)
+        {
+            IntT buffer{};
+            stream.read(reinterpret_cast<char*>(&buffer), sizeof(IntT));
+            return buffer;
+        }
 
         /// <summary>
-        /// Reads the specified number of characters from the current stream and discards them.
+        /// Reads a length-prefixed string from the stream.
         /// </summary>
-        void ignore(size_t count);
+        template<class LengthT>
+        static std::string readString(std::ifstream& stream)
+        {
+            LengthT length{};
+            stream.read(reinterpret_cast<char*>(&length), sizeof(LengthT));
 
-        /// <summary>
-        /// Reads the specified number of characters from the current stream.
-        /// </summary>
-        std::string readChars(size_t count);
-
-        /// <summary>
-        /// Reads a length-prefixed string from the current stream. 
-        /// This method first reads the length of the string as a 4-byte unsigned integer, 
-        /// and then reads that many characters from the stream.
-        /// </summary>
-        std::string readString();
-
-        /// <summary>
-        /// Reads a 1-byte signed integer from the current stream.
-        /// </summary>
-        int8_t readInt8();
-
-        /// <summary>
-        /// Reads a 2-byte signed integer from the current stream.
-        /// </summary>
-        int16_t readInt16();
-
-        /// <summary>
-        /// Reads a 4-byte signed integer from the current stream.
-        /// </summary>
-        int32_t readInt32();
-
-        /// <summary>
-        /// Reads an 8-byte signed integer from the current stream.
-        /// </summary>
-        int64_t readInt64();
-
-        /// <summary>
-        /// Reads a 1-byte unsigned integer from the current stream.
-        /// </summary>
-        uint8_t readUInt8();
-
-        /// <summary>
-        /// Reads a 2-byte unsigned integer from the current stream.
-        /// </summary>
-        uint16_t readUInt16();
-
-        /// <summary>
-        /// Reads a 4-byte unsigned integer from the current stream.
-        /// </summary>
-        uint32_t readUInt32();
-
-        /// <summary>
-        /// Reads an 8-byte unsigned integer from the current stream.
-        /// </summary>
-        uint64_t readUInt64();
-
-        /// <summary>
-        /// Reads a 4-byte floating point value from the current stream.
-        /// </summary>
-        float readSingle();
-
-        /// <summary>
-        /// Reads an 8-byte floating point value from the current stream.
-        /// </summary>
-        double readDouble();
-
-    private:
-
-        std::ifstream* stream_;
-
-    public:
-
-        SBinaryReader(const SBinaryReader&) = delete;
-        SBinaryReader& operator=(const SBinaryReader&) = delete;
+            std::string buffer(length, 0);
+            stream.read(buffer.data(), buffer.size());
+            return buffer;
+        }
     };
 }

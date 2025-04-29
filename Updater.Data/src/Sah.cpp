@@ -43,40 +43,41 @@ std::shared_ptr<SFolder> Sah::ensureFolderExists(const std::filesystem::path& pa
 void Sah::read()
 {
     std::ifstream stream(path, std::ios::binary);
-    SBinaryReader binaryReader(stream);
+    if (!stream)
+        throw std::exception();
 
-    signature = binaryReader.readChars(3);
-    unknown = binaryReader.readInt32();
-    fileCount = binaryReader.readInt32();
-    binaryReader.ignore(40);
+    signature = readChars(stream, 3);
+    unknown = readInt<int32_t>(stream);
+    fileCount = readInt<int32_t>(stream);
+    stream.ignore(40);
 
-    auto rootFolderName = binaryReader.readString();
+    auto rootFolderName = readString<uint32_t>(stream);
     rootFolderName.pop_back();
     rootFolder = std::make_shared<SFolder>(rootFolderName);
 
-    auto readFolder = [this, &binaryReader](const auto& self, auto& currentFolder) -> void {
+    auto readFolder = [this, &stream](const auto& self, auto& currentFolder) -> void {
         folders.insert({ currentFolder->path, currentFolder });
 
-        auto fileCount = binaryReader.readInt32();
+        auto fileCount = readInt<int32_t>(stream);
         // Decrypt here (e.g., fileCount ^= 1234)
         for (int i = 0; i < fileCount; ++i)
         {
-            auto fileName = binaryReader.readString();
+            auto fileName = readString<uint32_t>(stream);
             fileName.pop_back();
 
             auto file = std::make_shared<SFile>(fileName, currentFolder);
-            file->offset = binaryReader.readInt64();
-            file->length = binaryReader.readInt32();
-            file->timestamp = binaryReader.readInt32();
+            file->offset = readInt<int64_t>(stream);
+            file->length = readInt<int32_t>(stream);
+            file->timestamp = readInt<int32_t>(stream);
 
             currentFolder->files.insert({ file->name, file });
             files.insert({ file->path, file });
         }
 
-        auto subfolderCount = binaryReader.readInt32();
+        auto subfolderCount = readInt<int32_t>(stream);
         for (int i = 0; i < subfolderCount; ++i)
         {
-            auto subfolderName = binaryReader.readString();
+            auto subfolderName = readString<uint32_t>(stream);
             subfolderName.pop_back();
 
             auto subfolder = std::make_shared<SFolder>(subfolderName, currentFolder);
@@ -87,48 +88,49 @@ void Sah::read()
 
     readFolder(readFolder, rootFolder);
     fileCount = Convert::toInt32(files.size());
-    binaryReader.close();
+    stream.close();
 }
 
 void Sah::write()
 {
-    const std::string zeros(40, 0);
     std::ofstream stream(path, std::ios::binary);
-    SBinaryWriter binaryWriter(stream);
+    if (!stream)
+        throw std::exception();
 
     if (signature.size() != 3)
         signature.resize(3);
 
-    binaryWriter.write(signature, 0, 3);
-    binaryWriter.write(unknown);
-    binaryWriter.write(fileCount);
-    binaryWriter.write(zeros, 0, 40);
-    binaryWriter.write(rootFolder->name.string());
+    writeChars(stream, signature, 0, 3);
+    writeInt(stream, unknown);
+    writeInt(stream, fileCount);
+    writeChars(stream, std::string(40, 0), 0, 40);
+    writeString<uint32_t>(stream, rootFolder->name.string());
 
-    auto writeFolder = [this, &binaryWriter](const auto& self, const auto& currentFolder) -> void {
+    auto writeFolder = [this, &stream](const auto& self, const auto& currentFolder) -> void {
         auto fileCount = Convert::toInt32(currentFolder->files.size());
         // Encrypt here (e.g., fileCount ^= 1234)
-        binaryWriter.write(fileCount);
+        writeInt(stream, fileCount);
 
         for (const auto& [name, file] : currentFolder->files)
         {
-            binaryWriter.write(name.string());
-            binaryWriter.write(file->offset);
-            binaryWriter.write(file->length);
-            binaryWriter.write(file->timestamp);
+            writeString<uint32_t>(stream, name.string());
+            writeInt(stream, file->offset);
+            writeInt(stream, file->length);
+            writeInt(stream, file->timestamp);
         }
 
         auto subfolderCount = Convert::toInt32(currentFolder->subfolders.size());
-        binaryWriter.write(subfolderCount);
+        writeInt(stream, subfolderCount);
 
         for (const auto& [name, subfolder] : currentFolder->subfolders)
         {
-            binaryWriter.write(name.string());
+            writeString<uint32_t>(stream, name.string());
             self(self, subfolder);
         }
     };
 
     writeFolder(writeFolder, rootFolder);
-    binaryWriter.write(zeros, 0, 8);
-    binaryWriter.close();
+    writeInt<int32_t>(stream, 0);
+    writeInt<int32_t>(stream, 0);
+    stream.close();
 }
