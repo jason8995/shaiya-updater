@@ -31,7 +31,7 @@
     <ClInclude Include="include\Sah.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\SBinaryReader.h">
+    <ClInclude Include="include\StreamHelper.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\PathHelper.h">
@@ -41,9 +41,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\SFolder.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SBinaryWriter.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

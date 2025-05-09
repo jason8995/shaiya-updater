@@ -7,10 +7,9 @@
 #include "include/Convert.h"
 #include "include/PathHelper.h"
 #include "include/Sah.h"
-#include "include/SBinaryReader.h"
-#include "include/SBinaryWriter.h"
 #include "include/SFile.h"
 #include "include/SFolder.h"
+#include "include/StreamHelper.h"
 using namespace Updater::Data;
 
 std::shared_ptr<SFolder> Sah::ensureFolderExists(const std::filesystem::path& path)
