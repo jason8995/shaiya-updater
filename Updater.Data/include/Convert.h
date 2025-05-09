@@ -14,7 +14,7 @@ namespace Updater::Data
         /// </summary>
         static int32_t toInt32(size_t value)
         {
-            if (value > std::numeric_limits<int32_t>::max())
+            if (std::cmp_greater(value, std::numeric_limits<int32_t>::max()))
                 throw std::overflow_error::exception();
 
             return static_cast<int32_t>(value);
@@ -25,7 +25,7 @@ namespace Updater::Data
         /// </summary>
         static uint32_t toUInt32(size_t value)
         {
-            if (value > std::numeric_limits<uint32_t>::max())
+            if (std::cmp_greater(value, std::numeric_limits<uint32_t>::max()))
                 throw std::overflow_error::exception();
 
             return static_cast<uint32_t>(value);
