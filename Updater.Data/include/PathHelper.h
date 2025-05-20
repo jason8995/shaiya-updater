@@ -1,8 +1,5 @@
 #pragma once
-#include <algorithm>
 #include <filesystem>
-#include <locale>
-#include <string>
 #include <vector>
 
 namespace Updater::Data
@@ -31,30 +28,6 @@ namespace Updater::Data
                 parts.push_back(part);
 
             return parts;
-        }
-
-        /// <summary>
-        /// Compares two paths, ignoring case.
-        /// </summary>
-        static int icompare(const Path::string_type& lhs, const Path::string_type& rhs, const std::locale& loc = std::locale())
-        {
-            auto result = std::lexicographical_compare_three_way(
-                lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend(), [&loc](Path::value_type lc, Path::value_type rc) {
-                    return std::toupper<Path::value_type>(lc, loc) <=> std::toupper<Path::value_type>(rc, loc);
-                });
-
-            return std::is_lt(result) ? -1 : std::is_gt(result) ? 1 : 0;
-        }
-    };
-
-    /// <summary>
-    /// A case-insensitive less than comparator.
-    /// </summary>
-    struct PathICompareLT : private PathHelper
-    {
-        bool operator()(const Path& lhs, const Path& rhs) const
-        {
-            return icompare(lhs, rhs) < 0;
         }
     };
 }
