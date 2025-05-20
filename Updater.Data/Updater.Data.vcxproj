@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Convert.h" />
+    <ClInclude Include="include\PathILexicographicalCompare.h" />
     <ClInclude Include="include\PathHelper.h" />
     <ClInclude Include="include\StreamHelper.h" />
     <ClInclude Include="include\Data.h" />

@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include "PathHelper.h"
+#include "PathILexicographicalCompare.h"
 
 namespace Updater::Data
 {
@@ -16,8 +17,8 @@ namespace Updater::Data
         std::filesystem::path name;
         std::shared_ptr<SFolder> parentFolder;
 
-        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathICompareLT> files;
-        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathICompareLT> subfolders;
+        std::map<std::filesystem::path, std::shared_ptr<SFile>, PathILexicographicalCompare> files;
+        std::map<std::filesystem::path, std::shared_ptr<SFolder>, PathILexicographicalCompare> subfolders;
 
         /// <summary>
         /// Initializes a new instance of the SFolder class.

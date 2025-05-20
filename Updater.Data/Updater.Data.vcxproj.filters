@@ -43,5 +43,8 @@
     <ClInclude Include="include\SFolder.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\PathILexicographicalCompare.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
